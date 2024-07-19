@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.openclassrooms.microback.modele.Patient;
 
 @Repository
-public interface PatientRepository extends JpaRepository<Patient, Long> {
+public interface PatientRepository extends JpaRepository<Patient, Integer> {
 
 }

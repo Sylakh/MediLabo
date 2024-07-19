@@ -1,5 +1,6 @@
 package com.openclassrooms.microback.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -24,7 +25,8 @@ public class PatientService {
 	}
 
 	public Patient update(Patient patient, int id) throws Exception {
-		Optional<Patient> optionalPatient = patientRepository.findById((long) id);
+		logger.info("process update patient begins");
+		Optional<Patient> optionalPatient = patientRepository.findById(id);
 		if (optionalPatient.isPresent()) {
 			Patient patientToBeUpdated = optionalPatient.get();
 			patientToBeUpdated.setFirstName(patient.getFirstName());
@@ -38,6 +40,31 @@ public class PatientService {
 			throw new Exception("Patient not found");
 		}
 
+	}
+
+	public List<Patient> getAllPatent() {
+		logger.info("process get all patients begins");
+		return patientRepository.findAll();
+	}
+
+	public Patient getPatientById(int id) throws Exception {
+		logger.info("process get patient by id begins");
+		Optional<Patient> optionalPatient = patientRepository.findById(id);
+		if (optionalPatient.isPresent()) {
+			return optionalPatient.get();
+		} else {
+			throw new Exception("Patient not found");
+		}
+	}
+
+	public void delete(int id) throws Exception {
+		logger.info("process get patient by id begins");
+		Optional<Patient> optionalPatient = patientRepository.findById(id);
+		if (optionalPatient.isPresent()) {
+			patientRepository.deleteById(optionalPatient.get().getId());
+		} else {
+			throw new Exception("Patient not found");
+		}
 	}
 
 }
