@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import lombok.Data;
 
 @Entity
@@ -32,6 +33,7 @@ public class Patient {
 
 	@Column(name = "birthday")
 	@NotNull(message = "birthday is mandatory")
+	@Past
 	private Date birthday;
 
 	@Column(name = "gender")

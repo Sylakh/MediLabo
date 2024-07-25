@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.openclassrooms.microback.exceptions.PatientNotFoundException;
 import com.openclassrooms.microback.modele.Patient;
 import com.openclassrooms.microback.repository.PatientRepository;
 
@@ -37,7 +38,7 @@ public class PatientService {
 			patientToBeUpdated.setGender(patient.getGender());
 			return patientRepository.save(patientToBeUpdated);
 		} else {
-			throw new Exception("Patient not found");
+			throw new PatientNotFoundException("Patient not found");
 		}
 
 	}
@@ -53,7 +54,7 @@ public class PatientService {
 		if (optionalPatient.isPresent()) {
 			return optionalPatient.get();
 		} else {
-			throw new Exception("Patient not found");
+			throw new PatientNotFoundException("Patient not found");
 		}
 	}
 
@@ -63,7 +64,7 @@ public class PatientService {
 		if (optionalPatient.isPresent()) {
 			patientRepository.deleteById(optionalPatient.get().getId());
 		} else {
-			throw new Exception("Patient not found");
+			throw new PatientNotFoundException("Patient not found");
 		}
 	}
 

@@ -2,16 +2,18 @@ package com.openclassrooms.microfront.beans;
 
 import java.sql.Date;
 
+import jakarta.validation.constraints.NotNull;
+
 public class PatientBeans {
 
 	private int id;
-
+	@NotNull(message = "lastName is mandatory")
 	private String lastName;
-
+	@NotNull(message = "firstName is mandatory")
 	private String firstName;
-
+	@NotNull(message = "birthday is mandatory")
 	private Date birthday;
-
+	@NotNull(message = "gender is mandatory")
 	private String gender;
 	private String address;
 	private String phone;

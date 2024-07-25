@@ -77,7 +77,7 @@ public class FrontController {
 			Model model) throws Exception {
 		logger.info("update patient id: " + id);
 		if (result.hasErrors()) {
-			return "patient/update";
+			return "patient/update/" + id;
 		}
 		patientProxy.update(patient, id);
 		model.addAttribute("patients", patientProxy.getAllPatient());
