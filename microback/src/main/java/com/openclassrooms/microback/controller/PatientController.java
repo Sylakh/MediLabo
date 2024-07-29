@@ -29,6 +29,11 @@ public class PatientController {
 	@Autowired
 	private PatientService patientService;
 
+	@GetMapping("/hello")
+	public String hello() {
+		return "Hello from Microback!";
+	}
+
 	@PostMapping("/patient")
 	public ResponseEntity<Patient> addPatient(@Valid @RequestBody Patient patient) {
 		logger.info("Create a new patient");

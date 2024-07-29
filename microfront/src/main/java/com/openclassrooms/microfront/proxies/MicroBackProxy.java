@@ -13,7 +13,7 @@ import com.openclassrooms.microfront.beans.PatientBeans;
 
 import jakarta.validation.Valid;
 
-@FeignClient(name = "microback", url = "localhost:9001")
+@FeignClient(name = "microback", url = "localhost:8080/microback")
 public interface MicroBackProxy {
 
 	@GetMapping("/patient")
