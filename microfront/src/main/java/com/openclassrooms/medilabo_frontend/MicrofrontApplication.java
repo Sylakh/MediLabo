@@ -1,4 +1,4 @@
-package com.openclassrooms.microfront;
+package com.openclassrooms.medilabo_frontend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

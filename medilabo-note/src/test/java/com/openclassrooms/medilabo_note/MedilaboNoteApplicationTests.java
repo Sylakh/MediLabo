@@ -1,10 +1,10 @@
-package com.openclassrooms.gateway_server;
+package com.openclassrooms.medilabo_note;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class GatewayServerApplicationTests {
+class MedilaboNoteApplicationTests {
 
 	@Test
 	void contextLoads() {

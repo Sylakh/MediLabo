@@ -1,4 +1,4 @@
-package com.openclassrooms.microfront.controller;
+package com.openclassrooms.medilabo_frontend.controller;
 
 import java.util.List;
 
@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.openclassrooms.microfront.beans.PatientBeans;
-import com.openclassrooms.microfront.proxies.MicroBackProxy;
+import com.openclassrooms.medilabo_frontend.beans.PatientBeans;
+import com.openclassrooms.medilabo_frontend.proxies.MicroBackProxy;
 
 import jakarta.validation.Valid;
 

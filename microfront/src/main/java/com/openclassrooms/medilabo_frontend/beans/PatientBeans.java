@@ -1,4 +1,4 @@
-package com.openclassrooms.microfront.beans;
+package com.openclassrooms.medilabo_frontend.beans;
 
 import java.sql.Date;
 
