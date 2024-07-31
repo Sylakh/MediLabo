@@ -8,8 +8,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.openclassrooms.microback.exceptions.PatientNotFoundException;
-import com.openclassrooms.microback.modele.Patient;
+import com.openclassrooms.microback.exception.PatientNotFoundException;
+import com.openclassrooms.microback.model.Patient;
 import com.openclassrooms.microback.repository.PatientRepository;
 
 @Service

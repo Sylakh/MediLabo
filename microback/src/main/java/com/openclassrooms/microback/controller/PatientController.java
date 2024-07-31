@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.openclassrooms.microback.modele.Patient;
+import com.openclassrooms.microback.model.Patient;
 import com.openclassrooms.microback.service.PatientService;
 
 import jakarta.validation.Valid;

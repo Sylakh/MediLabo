@@ -1,4 +1,4 @@
-package com.openclassrooms.microback.modele;
+package com.openclassrooms.microback.model;
 
 import java.sql.Date;
 
