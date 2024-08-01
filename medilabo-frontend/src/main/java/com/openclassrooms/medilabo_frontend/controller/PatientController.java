@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,20 +16,25 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.openclassrooms.medilabo_frontend.beans.PatientBeans;
+import com.openclassrooms.medilabo_frontend.beans.PatientNoteBeans;
+import com.openclassrooms.medilabo_frontend.proxies.MedilaboNoteProxy;
 import com.openclassrooms.medilabo_frontend.proxies.MicroBackProxy;
 
 import jakarta.validation.Valid;
 
 @Controller
-public class FrontController {
+public class PatientController {
 
-	private static final Logger logger = LogManager.getLogger("FrontController");
+	private static final Logger logger = LogManager.getLogger("PatientController");
 
 	private final MicroBackProxy patientProxy;
 
-	public FrontController(MicroBackProxy patientProxy) {
+	public PatientController(MicroBackProxy patientProxy) {
 		this.patientProxy = patientProxy;
 	}
+
+	@Autowired
+	private MedilaboNoteProxy medilaboNoteProxy;
 
 	@GetMapping("/")
 	public String accueil(Model model) {
@@ -50,7 +57,14 @@ public class FrontController {
 		if (result.hasErrors()) {
 			return "patient/add";
 		}
-		patientProxy.add(patient);
+		ResponseEntity<PatientBeans> responseEntity = patientProxy.add(patient);
+		PatientNoteBeans patientNote = new PatientNoteBeans();
+		String patientId = Integer.toString(responseEntity.getBody().getId());
+		patientNote.setPatientId(patientId);
+		patientNote.setPatientFirstName(responseEntity.getBody().getFirstName());
+		patientNote.setPatientLastName(responseEntity.getBody().getLastName());
+		medilaboNoteProxy.addPatient(patientNote);
+
 		model.addAttribute("patients", patientProxy.getAllPatient());
 		return "redirect:/";
 

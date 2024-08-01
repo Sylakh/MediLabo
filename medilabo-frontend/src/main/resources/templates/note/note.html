@@ -3,70 +3,40 @@
 	  xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="utf-8"/>
-<title>Update Patient</title>
+<title>Patient Information</title>
 <link rel="stylesheet" href="../../css/bootstrap.min.css" >
 </head>
 <body>
 <div class="container">
 	<div class="row">
-		<h2>Update Patient</h2>
+		<h2>Patient Information</h2>
 	</div>
-
+	<a class="btn btn-danger btn-sm" href="/">Retour</a>
 	<div class="row">
-		<form action="#" th:action="@{/patient/update/{id}(id=${patient.id})}" th:object="${patient}" method="post" class="form-horizontal" style="width: 100%">
-			<div class="form-group">
-				<label for="lastName" class="col-sm-2 control-label">LastName</label>
-				<div class="col-sm-10">
-					<input type="text" th:field="*{lastName}" id="lastName" placeholder="lastName" class="col-4">
-					<p class="text-danger" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></p>
-				</div>
-			</div>
-			<div class="form-group">
-				<label for="firstName" class="col-sm-2 control-label">firstName</label>
-				<div class="col-sm-10">
-					<input type="text" th:field="*{firstName}" id="firstName" placeholder="firstName" class="col-4">
-					<p class="text-danger" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></p>
-				</div>
-			</div>
-			<div class="form-group">
-				<label for="birthday" class="col-sm-2 control-label">Type</label>
-				<div class="col-sm-10">
-					<input type="date" th:field="*{birthday}" id="birthday" placeholder="birthday" class="col-4">
-					<p class="text-danger" th:if="${#fields.hasErrors('birthday')}" th:errors="*{birthday}"></p>
-				</div>
-			</div>
-			<div class="form-group">
-				<label for="gender" class="col-sm-2 control-label">gender</label>
-				<div class="col-sm-10">
-					<input type="text" th:field="*{gender}" id="gender" placeholder="gender" class="col-4">
-					<p class="text-danger" th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}"></p>
-				</div>
-			</div>
-			<div class="form-group">
-				<label for="address" class="col-sm-2 control-label">address</label>
-				<div class="col-sm-10">
-					<input type="text" th:field="*{address}" id="address" placeholder="address" class="col-4">
-					<p class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></p>
-				</div>
-			</div>
-			<div class="form-group">
-				<label for="phone" class="col-sm-2 control-label">phone</label>
-				<div class="col-sm-10">
-					<input type="text" th:field="*{phone}" id="phone" placeholder="phone" class="col-4">
-					<p class="text-danger" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></p>
-				</div>
-			</div>
+		<div>
+		       <h2>Informations du Patient:</h2>
+		       <p>ID: <span th:text="${patientNote.patientId}"></span></p>
+		       <p>Prénom: <span th:text="${patientNote.patientFirstName}"></span></p>
+		       <p>Nom: <span th:text="${patientNote.patientLastName}"></span></p>
+		   </div>
+		   <div th:if="${not #lists.isEmpty(patientNote.patientNotes)}">
+		           <h2>Notes:</h2>
+		           <ul>
+		               <li th:each="note : ${patientNote.patientNotes}" th:text="${note}"></li>
+		           </ul>
+		       </div>
+		   <div>
+		           <h2>Ajouter une nouvelle note:</h2>
+		           <form th:action="@{/note/add/{id}(id=${patientNote.patientId})}" method="post">
+		               <textarea name="noteContent" required="required" placeholder="Entrez une nouvelle note ici..."></textarea>
+		               <button type="submit">Ajouter la note</button>
+		           </form>
+		       </div>
+		
+		
 
-			<div class="form-group">
-				<div class="col-sm-12">
-					<input type="hidden" th:field="*{id}">
-					<a class="btn btn-danger btn-sm" href="/">Cancel</a>
-					<input class="btn btn-primary btn-sm" type="submit" value="Update Patient">
-				</div>
-			</div>
-		</form>
 	</div>
-
+	
 </div>
 </body>
 </html>

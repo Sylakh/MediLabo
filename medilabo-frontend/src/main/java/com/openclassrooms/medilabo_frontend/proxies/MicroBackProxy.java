@@ -3,6 +3,7 @@ package com.openclassrooms.medilabo_frontend.proxies;
 import java.util.List;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +24,7 @@ public interface MicroBackProxy {
 	PatientBeans findPatientById(@PathVariable("id") int id);
 
 	@PostMapping("/patient")
-	PatientBeans add(@Valid @RequestBody PatientBeans patient);
+	ResponseEntity<PatientBeans> add(@Valid @RequestBody PatientBeans patient);
 
 	@DeleteMapping("/patient/{id}")
 	void delete(@PathVariable("id") int id);
