@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.openclassrooms.medilabo_note.exception.PatientNoteNotFoundException;
 import com.openclassrooms.medilabo_note.model.PatientNote;
 import com.openclassrooms.medilabo_note.repository.PatientNoteRepository;
 
@@ -32,7 +33,7 @@ public class PatientNoteService {
 		if (optionalPatientNote.isPresent()) {
 			return optionalPatientNote.get();
 		} else {
-			throw new Exception("PatientNote not found");
+			throw new PatientNoteNotFoundException("PatientNote not found");
 		}
 	}
 
@@ -56,7 +57,7 @@ public class PatientNoteService {
 			patientNoteFound.setPatientNotes(notes);
 			return patientNoteRepository.save(patientNoteFound);
 		} else {
-			throw new Exception("PatientNote not found");
+			throw new PatientNoteNotFoundException("PatientNote not found");
 		}
 	}
 
