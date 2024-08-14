@@ -22,15 +22,16 @@
 		   <div th:if="${not #lists.isEmpty(patientNote.patientNotes)}">
 		           <h2>Notes:</h2>
 		           <ul>
-		               <li th:each="note : ${patientNote.patientNotes}" th:text="${note}"></li>
+		               <!--<li th:each="note : ${patientNote.patientNotes}" th:utext="${note}"></li>-->
+					   <li th:each="note : ${patientNote.patientNotes}" th:utext="${#strings.replace(note, '\n', '</br>')}"></li>
 		           </ul>
-		       </div>
-		   <div>
+		   </div>
+		   <div><!--css="white-space: pre;"-->
 		           <h2>Ajouter une nouvelle note:</h2>
-		           <form th:action="@{/note/add/{id}(id=${patientNote.patientId})}" method="post">
-		               <textarea name="noteContent" required="required" placeholder="Entrez une nouvelle note ici..."></textarea>
+		           <form action="#" th:action="@{/note/add/{id}(id=${patientNote.patientId})}" method="post">
+		               <textarea name="noteContent" required="required"  rows="10" cols="30" placeholder="Entrez une nouvelle note ici..."></textarea>
 		               <button type="submit">Ajouter la note</button>
-		           </form>
+		           </form> 
 		       </div>
 		
 		

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.openclassrooms.medilabo_frontend.beans.PatientNoteBeans;
 
-@FeignClient(name = "medilabo-note", url = "localhost:8080/medilabo-note")
+@FeignClient(name = "medilabo-note", url = "localhost:9102/medilabo-note")
 public interface MedilaboNoteProxy {
 
 	@GetMapping("patientnote/{id}")

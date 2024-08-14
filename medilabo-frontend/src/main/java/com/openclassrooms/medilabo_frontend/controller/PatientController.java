@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,7 +36,19 @@ public class PatientController {
 	private MedilaboNoteProxy medilaboNoteProxy;
 
 	@GetMapping("/")
-	public String accueil(Model model) {
+	public String index(Model model) {
+
+		return "index";
+	}
+
+	@GetMapping("/logout")
+	public String logout() {
+
+		return "index";
+	}
+
+	@GetMapping("/home")
+	public String home(Model model) {
 		List<PatientBeans> patients = patientProxy.getAllPatient();
 		model.addAttribute("patients", patients);
 		return "home";
@@ -51,8 +62,7 @@ public class PatientController {
 	}
 
 	@PostMapping("/patient/validate")
-	public String validate(@Validated @ModelAttribute("patientBeans") PatientBeans patient, BindingResult result,
-			Model model) {
+	public String validate(@ModelAttribute("patientBeans") PatientBeans patient, BindingResult result, Model model) {
 		logger.info("Create a new patient in database");
 		if (result.hasErrors()) {
 			return "patient/add";
@@ -97,5 +107,14 @@ public class PatientController {
 		model.addAttribute("patients", patientProxy.getAllPatient());
 		return "redirect:/";
 	}
+
+	/*
+	 * @GetMapping("/auth")
+	 * 
+	 * @ResponseBody public Authentication getUserAuthenticated(Authentication
+	 * authentication) { logger.info("Get user authenticated");
+	 * 
+	 * return authentication; }
+	 */
 
 }

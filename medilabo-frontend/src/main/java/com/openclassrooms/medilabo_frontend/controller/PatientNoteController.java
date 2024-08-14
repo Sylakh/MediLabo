@@ -47,7 +47,8 @@ public class PatientNoteController {
 			throws Exception {
 		int patientId = Integer.parseInt(id);
 		logger.info("add note process begins for id " + patientId + " with note: " + noteContent);
-		medilaboNoteProxy.addNoteToPatientId(noteContent, id);
+		String noteToBeSaved = noteContent.replace("\n", "</br>");
+		medilaboNoteProxy.addNoteToPatientId(noteToBeSaved, id);
 		PatientNoteBeans patientNoteBeans = medilaboNoteProxy.getPatientNoteById(id);
 		model.addAttribute("patientNote", patientNoteBeans);
 		return "note/note";
