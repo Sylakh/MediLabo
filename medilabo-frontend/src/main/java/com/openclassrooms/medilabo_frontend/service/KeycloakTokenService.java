@@ -1,13 +1,14 @@
-package com.openclassrooms.medilabo_frontend;
+package com.openclassrooms.medilabo_frontend.service;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.openfeign.EnableFeignClients;
+import java.time.Instant;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -15,12 +16,29 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@SpringBootApplication
-@EnableFeignClients("com.openclassrooms")
-public class MicrofrontApplication {
+@Service
+public class KeycloakTokenService {
 
-	public static void main(String[] args) {
-		SpringApplication.run(MicrofrontApplication.class, args);
+	private final ConcurrentHashMap<String, CachedToken> tokenCache = new ConcurrentHashMap<>();
+
+	public String getAccessToken() {
+		CachedToken cachedToken = tokenCache.get("accessToken");
+
+		if (cachedToken == null || cachedToken.isExpired()) {
+			// Récupérer un nouveau token depuis Keycloak
+			String newToken = fetchNewToken();
+			Instant expiryTime = Instant.now().plusSeconds(600); // le token expire dans 600 secondes
+
+			cachedToken = new CachedToken(newToken, expiryTime);
+			tokenCache.put("accessToken", cachedToken);
+		}
+
+		return cachedToken.getToken();
+	}
+
+	private String fetchNewToken() {
+		// Implémentez la logique pour récupérer un nouveau jeton à partir de Keycloak
+		// Cette méthode doit retourner le jeton d'accès
 
 		// Créer une instance de RestTemplate
 		RestTemplate restTemplate = new RestTemplate();
@@ -60,8 +78,31 @@ public class MicrofrontApplication {
 			// Afficher l'access_token
 			System.out.println("Access Token: " + accessToken);
 
+			return accessToken;
+
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+
+		return "nouveau_token"; // Remplacez par la logique réelle pour obtenir le jeton
+
+	}
+
+	private static class CachedToken {
+		private final String token;
+		private final Instant expiryTime;
+
+		public CachedToken(String token, Instant expiryTime) {
+			this.token = token;
+			this.expiryTime = expiryTime;
+		}
+
+		public String getToken() {
+			return token;
+		}
+
+		public boolean isExpired() {
+			return Instant.now().isAfter(expiryTime);
 		}
 	}
 }

@@ -1,10 +1,31 @@
 package com.openclassrooms.gateway_server.configuration;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
+import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
+import org.springframework.security.web.server.SecurityWebFilterChain;
 
 @Configuration
-//@EnableWebFluxSecurity
+@EnableWebFluxSecurity
 public class SecurityConfig {
+
+	@Bean
+	SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+		http.authorizeExchange(exchanges -> exchanges.pathMatchers("/microback/**", "/medilabo-note/**").authenticated()
+				.anyExchange().permitAll())
+				.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtDecoder(jwtDecoder())));
+
+		return http.build();
+	}
+
+	@Bean
+	ReactiveJwtDecoder jwtDecoder() {
+		String issuerUri = "http://localhost:8080/realms/medilabo";
+		return NimbusReactiveJwtDecoder.withJwkSetUri(issuerUri + "/protocol/openid-connect/certs").build();
+	}
 
 	/*
 	 * @Bean SecurityWebFilterChain springSecurityFilterChain( ServerHttpSecurity
