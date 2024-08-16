@@ -1,7 +1,6 @@
 package com.openclassrooms.medilabo_frontend.controller;
 
 import java.security.Principal;
-import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,25 +37,6 @@ public class PatientController {
 	@Autowired
 	private MedilaboNoteProxy medilaboNoteProxy;
 
-	@GetMapping("/")
-	public String index(Model model) {
-
-		return "index";
-	}
-
-	@GetMapping("/logout")
-	public String logout() {
-
-		return "index";
-	}
-
-	@GetMapping("/home")
-	public String home(Model model) {
-		List<PatientBeans> patients = patientProxy.getAllPatient();
-		model.addAttribute("patients", patients);
-		return "home";
-	}
-
 	@GetMapping("/patient/add")
 	public String addPatientForm(Model model) {
 		logger.info("Get request for add page");
@@ -79,7 +59,7 @@ public class PatientController {
 		medilaboNoteProxy.addPatient(patientNote);
 
 		model.addAttribute("patients", patientProxy.getAllPatient());
-		return "redirect:/";
+		return "redirect:/home";
 
 	}
 
@@ -88,7 +68,7 @@ public class PatientController {
 		logger.info("Delete patient id: " + id);
 		patientProxy.delete(id);
 		model.addAttribute("patients", patientProxy.getAllPatient());
-		return "redirect:/";
+		return "redirect:/home";
 	}
 
 	@GetMapping("/patient/update/{id}")
@@ -108,12 +88,13 @@ public class PatientController {
 		}
 		patientProxy.update(patient, id);
 		model.addAttribute("patients", patientProxy.getAllPatient());
-		return "redirect:/";
+		return "redirect:/home";
 	}
 
 	@GetMapping("/profile")
 	public String getProfile(Principal principal, Model model) {
 		if (principal instanceof KeycloakPrincipal) {
+			@SuppressWarnings("unchecked")
 			KeycloakPrincipal<KeycloakSecurityContext> kPrincipal = (KeycloakPrincipal<KeycloakSecurityContext>) principal;
 			String token = kPrincipal.getKeycloakSecurityContext().getTokenString();
 			model.addAttribute("token", token);

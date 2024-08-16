@@ -3,6 +3,7 @@ package com.openclassrooms.medilabo_frontend.service;
 import java.time.Instant;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -15,11 +16,35 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.openclassrooms.medilabo_frontend.model.UserData;
 
 @Service
 public class KeycloakTokenService {
 
+	private UserData userData;
+
+	public UserData getUserData() {
+		return userData;
+	}
+
+	public void setUserData(UserData userData) {
+		this.userData = userData;
+	}
+
 	private final ConcurrentHashMap<String, CachedToken> tokenCache = new ConcurrentHashMap<>();
+
+	// URL cible
+	@Value("${spring.security.oauth2.client.provider.keycloak.token-uri}")
+	private String urlToken;
+
+	@Value("${keycloak.token-revoke-uri}")
+	private String urlRevokeToken;
+
+	@Value("${spring.security.oauth2.client.registration.keycloack.client-id}")
+	private String clientId;
+
+	@Value("${spring.security.oauth2.client.registration.keycloack.client-secret}")
+	private String clientSecret;
 
 	public String getAccessToken() {
 		CachedToken cachedToken = tokenCache.get("accessToken");
@@ -37,14 +62,12 @@ public class KeycloakTokenService {
 	}
 
 	private String fetchNewToken() {
+
 		// Implémentez la logique pour récupérer un nouveau jeton à partir de Keycloak
 		// Cette méthode doit retourner le jeton d'accès
 
 		// Créer une instance de RestTemplate
 		RestTemplate restTemplate = new RestTemplate();
-
-		// Définir l'URL cible
-		String url = "http://localhost:8080/realms/medilabo/protocol/openid-connect/token";
 
 		// Définir les headers de la requête
 		HttpHeaders headers = new HttpHeaders();
@@ -52,17 +75,17 @@ public class KeycloakTokenService {
 
 		// Définir les paramètres du corps (body) sous forme de MultiValueMap
 		MultiValueMap<String, String> bodyParams = new LinkedMultiValueMap<>();
-		bodyParams.add("client_id", "medilabo-client");
-		bodyParams.add("username", "user1");
-		bodyParams.add("password", "password");
+		bodyParams.add("client_id", clientId);
+		bodyParams.add("username", userData.getUsername());
+		bodyParams.add("password", userData.getPassword());
 		bodyParams.add("grant_type", "password");
-		bodyParams.add("client_secret", "CPzskaE23byGd05bZx3CTyJ1yex2qJyw");
+		bodyParams.add("client_secret", clientSecret);
 
 		// Créer un HttpEntity avec les headers et le corps
 		HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(bodyParams, headers);
 
 		// Envoyer la requête POST
-		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+		ResponseEntity<String> response = restTemplate.exchange(urlToken, HttpMethod.POST, requestEntity, String.class);
 
 		// Récupérer le body de la réponse en tant que chaîne JSON
 		String responseBody = response.getBody();
@@ -105,4 +128,58 @@ public class KeycloakTokenService {
 			return Instant.now().isAfter(expiryTime);
 		}
 	}
+
+	public void logout() {
+		String accessToken = tokenCache.get("accessToken") != null ? tokenCache.get("accessToken").getToken() : null;
+
+		// Vider le cache des tokens
+		tokenCache.clear();
+		System.out.println("All tokens have been cleared.");
+
+		if (accessToken != null) {
+			revokeToken(accessToken);
+		}
+	}
+
+	private void revokeToken(String accessToken) {
+		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+		MultiValueMap<String, String> bodyParams = new LinkedMultiValueMap<>();
+		bodyParams.add("token", accessToken);
+		bodyParams.add("client_id", clientId);
+		bodyParams.add("client_secret", clientSecret);
+
+		HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(bodyParams, headers);
+
+		try {
+			ResponseEntity<String> response = restTemplate.exchange(urlRevokeToken, HttpMethod.POST, requestEntity,
+					String.class);
+			if (response.getStatusCode().is2xxSuccessful()) {
+				System.out.println("Token has been successfully revoked.");
+			} else {
+				System.out.println("Failed to revoke token. Status code: " + response.getStatusCode());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("An error occurred while revoking the token.");
+		} finally {
+
+		}
+	}
+
+	public boolean isUserDataValid(UserData userData) {
+		if (userData == null) {
+			return false;
+		}
+		if (userData.getUsername() == null || userData.getUsername().isEmpty()) {
+			return false;
+		}
+		if (userData.getPassword() == null || userData.getPassword().isEmpty()) {
+			return false;
+		}
+		return true;
+	}
+
 }

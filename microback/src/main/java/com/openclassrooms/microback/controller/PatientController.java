@@ -30,6 +30,7 @@ public class PatientController {
 
 	@GetMapping("/hello")
 	public String hello() {
+		logger.info("test hello");
 		return "Hello from Microback!";
 	}
 
@@ -40,11 +41,6 @@ public class PatientController {
 		if (Objects.isNull(patientSaved)) {
 			return ResponseEntity.noContent().build();
 		}
-		/*
-		 * URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-		 * .buildAndExpand(patientSaved.getId()).toUri(); return
-		 * ResponseEntity.created(location).build();
-		 */
 		return ResponseEntity.status(HttpStatus.CREATED).body(patientSaved);
 	}
 

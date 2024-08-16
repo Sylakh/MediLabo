@@ -14,10 +14,9 @@ public class FeignClientInterceptor implements RequestInterceptor {
 	@Autowired
 	private KeycloakTokenService keycloakTokenService; // Service pour récupérer le token
 
-	@Override
 	public void apply(RequestTemplate requestTemplate) {
 		String accessToken = keycloakTokenService.getAccessToken(); // Méthode pour récupérer le token
 		requestTemplate.header("Authorization", "Bearer " + accessToken);
-		System.out.println("Bearer " + accessToken);
+		// System.out.println("Bearer " + accessToken);
 	}
 }

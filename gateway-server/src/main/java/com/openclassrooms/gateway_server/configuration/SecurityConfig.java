@@ -15,7 +15,7 @@ public class SecurityConfig {
 	@Bean
 	SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
 		http.authorizeExchange(exchanges -> exchanges.pathMatchers("/microback/**", "/medilabo-note/**").authenticated()
-				.anyExchange().permitAll())
+				.anyExchange().authenticated())
 				.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtDecoder(jwtDecoder())));
 
 		return http.build();
