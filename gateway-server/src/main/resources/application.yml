@@ -11,16 +11,23 @@ spring:
     gateway:
       routes:
         - id: microback
-          uri: http://localhost:9001  # L'URI de votre service backend
+          uri: http://localhost:9001  # L'URI de microback
           predicates:
             - Path=/microback/**
           filters:
             - RemoveRequestHeader=Authorization
             - RelayTokenRequestFilter
-        - id: service2
-          uri: http://localhost:9003  # L'URI d'un autre service backend
+        - id: medilabo-note
+          uri: http://localhost:9003  # L'URI de medilabo-note
           predicates:
             - Path=/medilabo-note/**
+          filters:
+            - RemoveRequestHeader=Authorization
+            - RelayTokenRequestFilter
+        - id: medilabo-report
+          uri: http://localhost:9004  # L'URI de medilabo-report
+          predicates:
+            - Path=/medilabo-report/**
           filters:
             - RemoveRequestHeader=Authorization
             - RelayTokenRequestFilter

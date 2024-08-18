@@ -18,6 +18,10 @@ public class RouteConfig {
 						r -> r.path("/medilabo-note/**")
 								.filters(f -> f.rewritePath("/medilabo-note/(?<path>.*)", "/${path}"))
 								.uri("lb://medilabo-note"))
+				.route("medilabo-report",
+						r -> r.path("/medilabo-report/**")
+								.filters(f -> f.rewritePath("/medilabo-report/(?<path>.*)", "/${path}"))
+								.uri("lb://medilabo-report"))
 				.build();
 
 	}
