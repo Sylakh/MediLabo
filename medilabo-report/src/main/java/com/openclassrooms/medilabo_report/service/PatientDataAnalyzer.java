@@ -49,15 +49,19 @@ public class PatientDataAnalyzer {
 	 * @return Le nombre de déclencheurs uniques trouvés.
 	 */
 	private static int countTriggers(List<String> notes) {
-		Set<String> foundTriggers = new HashSet<>();
-		for (String note : notes) {
-			String upperNote = note.toUpperCase(); // Convertir la note en majuscules
-			for (String trigger : triggers) {
-				if (upperNote.contains(trigger) && !foundTriggers.contains(trigger)) {
-					foundTriggers.add(trigger);
+		if (notes != null) {
+			Set<String> foundTriggers = new HashSet<>();
+			for (String note : notes) {
+				String upperNote = note.toUpperCase(); // Convertir la note en majuscules
+				for (String trigger : triggers) {
+					if (upperNote.contains(trigger) && !foundTriggers.contains(trigger)) {
+						foundTriggers.add(trigger);
+					}
 				}
 			}
+			return foundTriggers.size();
+		} else {
+			return 0;
 		}
-		return foundTriggers.size();
 	}
 }

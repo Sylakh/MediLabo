@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.openclassrooms.medilabo_frontend.beans.PatientNoteBeans;
@@ -22,7 +23,7 @@ public class PatientNoteController {
 		this.medilaboNoteProxy = medilaboNoteProxy;
 	}
 
-	@GetMapping("note/note/{id}")
+	@GetMapping("/note/note/{id}")
 	public String story(Model model, @PathVariable("id") String id) throws Exception {
 		logger.info("Get request note/note/" + id);
 		PatientNoteBeans patientNoteBeans = medilaboNoteProxy.getPatientNoteById(id);
@@ -30,6 +31,7 @@ public class PatientNoteController {
 		return "note/note";
 	}
 
+	@PostMapping("/note/add/{id}")
 	public String addPatientNote(@PathVariable String id, @RequestParam("noteContent") String noteContent, Model model)
 			throws Exception {
 		int patientId = Integer.parseInt(id);

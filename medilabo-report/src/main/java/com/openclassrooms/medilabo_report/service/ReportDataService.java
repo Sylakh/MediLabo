@@ -17,7 +17,9 @@ import com.openclassrooms.medilabo_report.model.ReportData;
 @Service
 public class ReportDataService {
 
-	public List<ReportData> generateReports(List<PatientBeans> patients, List<PatientNoteBeans> notes) {
+	public List<ReportData> generateReports(List<PatientBeans> patients, List<PatientNoteBeans> notes)
+			throws Exception {
+
 		// Convertir la liste des notes en une map pour un accès plus rapide
 
 		// Utiliser String comme type de clé si getPatientId() retourne un String
@@ -44,9 +46,11 @@ public class ReportDataService {
 					// Ajouter le ReportData à la liste
 					reports.add(report);
 				}
+			} else {
+				throw new Exception("la liste est nulle!");
 			}
-		}
 
+		}
 		return reports;
 	}
 

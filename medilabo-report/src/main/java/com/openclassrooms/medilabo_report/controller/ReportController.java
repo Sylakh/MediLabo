@@ -34,7 +34,7 @@ public class ReportController {
 	}
 
 	@GetMapping("/report")
-	public List<ReportDataDTO> report() {
+	public List<ReportDataDTO> report() throws Exception {
 		List<PatientBeans> patients = new ArrayList<>();
 		List<PatientNoteBeans> notes = new ArrayList<>();
 		patients = microbackService.getAllPatients();
