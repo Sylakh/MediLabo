@@ -13,11 +13,13 @@ import com.openclassrooms.medilabo_report.model.ReportData;
 public class PatientDataAnalyzer {
 
 	private static final Set<String> triggers = Arrays.stream(TriggerTerm.values())
-			.map(term -> term.getDescription().toUpperCase()) // Convertir les descriptions en majuscules
+			.map(term -> term.getDescription().toLowerCase()) // Convertir les descriptions en majuscules
 			.collect(Collectors.toSet());
 
 	public static void analyzePatientData(ReportData reportData) {
 		int triggerCount = countTriggers(reportData.getNotes());
+
+		System.out.println("trigger: " + triggerCount + " for patient: " + reportData.getId());
 
 		if (triggerCount == 0) {
 			reportData.setResult(RiskLevel.NONE.name());
@@ -52,10 +54,12 @@ public class PatientDataAnalyzer {
 		if (notes != null) {
 			Set<String> foundTriggers = new HashSet<>();
 			for (String note : notes) {
-				String upperNote = note.toUpperCase(); // Convertir la note en majuscules
+				String upperNote = note.toLowerCase(); // Convertir la note en majuscules
+				upperNote = upperNote.replace(",", " ");
 				for (String trigger : triggers) {
 					if (upperNote.contains(trigger) && !foundTriggers.contains(trigger)) {
 						foundTriggers.add(trigger);
+						System.out.println("trigger " + trigger + " found!");
 					}
 				}
 			}

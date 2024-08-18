@@ -50,20 +50,30 @@ public class KeycloakTokenService {
 	@Value("${spring.security.oauth2.client.registration.keycloack.client-secret}")
 	private String clientSecret;
 
+	// Ajouter un attribut pour stocker l'heure d'expiration du token
+	private long tokenExpirationTime;
+
 	public String getAccessToken() {
 		logger.info("Get access token");
 		CachedToken cachedToken = tokenCache.get("accessToken");
 
+		long expiresIn = 600; // Exemple de valeur
+		tokenExpirationTime = System.currentTimeMillis() + expiresIn * 1000;
+
 		if (cachedToken == null || cachedToken.isExpired()) {
 			// Récupérer un nouveau token depuis Keycloak
 			String newToken = fetchNewToken();
-			Instant expiryTime = Instant.now().plusSeconds(600); // le token expire dans 600 secondes
+			Instant expiryTime = Instant.now().plusSeconds(expiresIn); // le token expire dans 600 secondes
 
 			cachedToken = new CachedToken(newToken, expiryTime);
 			tokenCache.put("accessToken", cachedToken);
 		}
 
 		return cachedToken.getToken();
+	}
+
+	public long getTokenExpirationTime() {
+		return tokenExpirationTime;
 	}
 
 	private String fetchNewToken() {

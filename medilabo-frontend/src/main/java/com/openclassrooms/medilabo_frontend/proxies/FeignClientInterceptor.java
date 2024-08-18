@@ -12,11 +12,21 @@ import feign.RequestTemplate;
 public class FeignClientInterceptor implements RequestInterceptor {
 
 	@Autowired
-	private KeycloakTokenService keycloakTokenService; // Service pour récupérer le token
+	private KeycloakTokenService keycloakTokenService;
 
-	public void apply(RequestTemplate requestTemplate) {
-		String accessToken = keycloakTokenService.getAccessToken(); // Méthode pour récupérer le token
-		requestTemplate.header("Authorization", "Bearer " + accessToken);
-		// System.out.println("Bearer " + accessToken);
+	private String currentToken;
+	private long tokenExpirationTime; // Stockage de l'heure d'expiration du token en millisecondes
+
+	@Override
+	public void apply(RequestTemplate template) {
+		// Vérifier si le token est expiré ou inexistant
+		if (currentToken == null || System.currentTimeMillis() >= tokenExpirationTime) {
+			// Récupérer un nouveau token et mettre à jour l'heure d'expiration
+			currentToken = keycloakTokenService.getAccessToken();
+			tokenExpirationTime = keycloakTokenService.getTokenExpirationTime();
+		}
+
+		// Ajouter le token à l'en-tête Authorization
+		template.header("Authorization", "Bearer " + currentToken);
 	}
 }
