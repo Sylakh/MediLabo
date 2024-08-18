@@ -2,6 +2,8 @@ package com.openclassrooms.medilabo_frontend.controller;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +21,8 @@ import com.openclassrooms.medilabo_frontend.service.KeycloakTokenService;
 @SessionAttributes("userData")
 public class LoginController {
 
+	private static final Logger logger = LogManager.getLogger("LoginController");
+
 	@Autowired
 	public KeycloakTokenService keycloakTokenService;
 
@@ -31,6 +35,7 @@ public class LoginController {
 	// Initialiser le modèle avec un objet UserData
 	@GetMapping("/")
 	public String showLoginForm(Model model) {
+		logger.info("Get request / ");
 		model.addAttribute("userData", new UserData(null, null));
 		return "login";
 	}
@@ -38,6 +43,7 @@ public class LoginController {
 	// Gérer la soumission du formulaire
 	@PostMapping("/login")
 	public String processLogin(UserData userData, Model model) {
+		logger.info("Post request /login ");
 		model.addAttribute("userData", userData);
 		keycloakTokenService.setUserData(userData);
 		return "redirect:/home";
@@ -45,6 +51,7 @@ public class LoginController {
 
 	@GetMapping("/home")
 	public String home(Model model) {
+		logger.info("Get request /home ");
 		UserData userData = (UserData) model.getAttribute("userData");
 		if (keycloakTokenService.isUserDataValid(userData)) {
 			model.addAttribute("message", "Welcome " + userData.getUsername() + "!");
@@ -60,8 +67,8 @@ public class LoginController {
 	// Méthode pour terminer la session si nécessaire
 	@GetMapping("/logout")
 	public String logout(SessionStatus sessionStatus, Model model) {
+		logger.info("Get request /logout ");
 		model.addAttribute("userData", new UserData(null, null));
-
 		sessionStatus.setComplete();
 		keycloakTokenService.logout();
 		return "redirect:/";

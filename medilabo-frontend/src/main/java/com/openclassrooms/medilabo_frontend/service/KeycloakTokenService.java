@@ -3,6 +3,8 @@ package com.openclassrooms.medilabo_frontend.service;
 import java.time.Instant;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -20,6 +22,8 @@ import com.openclassrooms.medilabo_frontend.model.UserData;
 
 @Service
 public class KeycloakTokenService {
+
+	private static final Logger logger = LogManager.getLogger("KeycloakTokenService");
 
 	private UserData userData;
 
@@ -47,6 +51,7 @@ public class KeycloakTokenService {
 	private String clientSecret;
 
 	public String getAccessToken() {
+		logger.info("Get access token");
 		CachedToken cachedToken = tokenCache.get("accessToken");
 
 		if (cachedToken == null || cachedToken.isExpired()) {
@@ -63,8 +68,7 @@ public class KeycloakTokenService {
 
 	private String fetchNewToken() {
 
-		// Implémentez la logique pour récupérer un nouveau jeton à partir de Keycloak
-		// Cette méthode doit retourner le jeton d'accès
+		logger.info("Get new access token");
 
 		// Créer une instance de RestTemplate
 		RestTemplate restTemplate = new RestTemplate();
@@ -98,16 +102,13 @@ public class KeycloakTokenService {
 			// Extraire l'access_token du JSON
 			String accessToken = jsonNode.get("access_token").asText();
 
-			// Afficher l'access_token
-			System.out.println("Access Token: " + accessToken);
-
 			return accessToken;
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		return "nouveau_token"; // Remplacez par la logique réelle pour obtenir le jeton
+		return "nouveau_token";
 
 	}
 

@@ -1,4 +1,4 @@
-package com.openclassrooms.microback;
+package com.openclassrooms.medilabo_report;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -6,10 +6,10 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-public class MicrobackApplication {
+public class MedilaboReportApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MicrobackApplication.class, args);
+		SpringApplication.run(MedilaboReportApplication.class, args);
 	}
 
 }

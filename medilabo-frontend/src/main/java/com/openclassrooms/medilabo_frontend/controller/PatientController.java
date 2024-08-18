@@ -1,11 +1,7 @@
 package com.openclassrooms.medilabo_frontend.controller;
 
-import java.security.Principal;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.KeycloakSecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -89,17 +85,6 @@ public class PatientController {
 		patientProxy.update(patient, id);
 		model.addAttribute("patients", patientProxy.getAllPatient());
 		return "redirect:/home";
-	}
-
-	@GetMapping("/profile")
-	public String getProfile(Principal principal, Model model) {
-		if (principal instanceof KeycloakPrincipal) {
-			@SuppressWarnings("unchecked")
-			KeycloakPrincipal<KeycloakSecurityContext> kPrincipal = (KeycloakPrincipal<KeycloakSecurityContext>) principal;
-			String token = kPrincipal.getKeycloakSecurityContext().getTokenString();
-			model.addAttribute("token", token);
-		}
-		return "profile";
 	}
 
 }
