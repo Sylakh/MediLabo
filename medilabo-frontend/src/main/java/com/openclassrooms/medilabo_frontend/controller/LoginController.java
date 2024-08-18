@@ -1,5 +1,6 @@
 package com.openclassrooms.medilabo_frontend.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -12,8 +13,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
+import com.openclassrooms.medilabo_frontend.DTO.PatientDTO;
 import com.openclassrooms.medilabo_frontend.beans.PatientBeans;
+import com.openclassrooms.medilabo_frontend.beans.ReportDataDTOBeans;
 import com.openclassrooms.medilabo_frontend.model.UserData;
+import com.openclassrooms.medilabo_frontend.proxies.MedilaboReportProxy;
 import com.openclassrooms.medilabo_frontend.proxies.MicroBackProxy;
 import com.openclassrooms.medilabo_frontend.service.KeycloakTokenService;
 
@@ -27,9 +31,11 @@ public class LoginController {
 	public KeycloakTokenService keycloakTokenService;
 
 	private final MicroBackProxy patientProxy;
+	private final MedilaboReportProxy medilaboReportProxy;
 
-	public LoginController(MicroBackProxy patientProxy) {
+	public LoginController(MicroBackProxy patientProxy, MedilaboReportProxy medilaboReportProxy) {
 		this.patientProxy = patientProxy;
+		this.medilaboReportProxy = medilaboReportProxy;
 	}
 
 	// Initialiser le modèle avec un objet UserData
@@ -55,7 +61,16 @@ public class LoginController {
 		UserData userData = (UserData) model.getAttribute("userData");
 		if (keycloakTokenService.isUserDataValid(userData)) {
 			model.addAttribute("message", "Welcome " + userData.getUsername() + "!");
-			List<PatientBeans> patients = patientProxy.getAllPatient();
+			List<PatientBeans> listPatient = patientProxy.getAllPatient();
+			List<ReportDataDTOBeans> reports = medilaboReportProxy.report();
+			List<PatientDTO> patients = new ArrayList<>();
+			for (PatientBeans patientBeans : listPatient) {
+				patients.add(
+						new PatientDTO(patientBeans.getId(), patientBeans.getLastName(), patientBeans.getFirstName(),
+								patientBeans.getBirthday(), patientBeans.getGender(), patientBeans.getAddress(),
+								patientBeans.getPhone(), getResultById(reports, (long) patientBeans.getId())));
+				System.out.println(getResultById(reports, (long) patientBeans.getId()));
+			}
 			model.addAttribute("patients", patients);
 		} else {
 			model.addAttribute("message", "No user data found!");
@@ -72,5 +87,14 @@ public class LoginController {
 		sessionStatus.setComplete();
 		keycloakTokenService.logout();
 		return "redirect:/";
+	}
+
+	public String getResultById(List<ReportDataDTOBeans> reports, Long i) {
+		for (ReportDataDTOBeans report : reports) {
+			if (report.getId().equals(i)) {
+				return report.getResult();
+			}
+		}
+		return null; // ou gérer différemment si aucun élément correspondant n'est trouvé
 	}
 }

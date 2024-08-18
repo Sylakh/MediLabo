@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.openclassrooms.medilabo_report.DTO.ReportDataDTO;
 import com.openclassrooms.medilabo_report.model.PatientBeans;
 import com.openclassrooms.medilabo_report.model.PatientNoteBeans;
 import com.openclassrooms.medilabo_report.model.ReportData;
@@ -33,7 +34,7 @@ public class ReportController {
 	}
 
 	@GetMapping("/report")
-	public void report() {
+	public List<ReportDataDTO> report() {
 		List<PatientBeans> patients = new ArrayList<>();
 		List<PatientNoteBeans> notes = new ArrayList<>();
 		patients = microbackService.getAllPatients();
@@ -45,10 +46,13 @@ public class ReportController {
 			PatientDataAnalyzer.analyzePatientData(report);
 		}
 
+		List<ReportDataDTO> listReportDTO = new ArrayList<>();
 		for (ReportData report : reports) {
+			listReportDTO.add(new ReportDataDTO(report.getId(), report.getResult()));
 			System.out.println(report.toString());
 		}
 
+		return listReportDTO;
 	}
 
 }
