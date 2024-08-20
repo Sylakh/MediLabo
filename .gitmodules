@@ -1,0 +1,3 @@
+[submodule "medilabo-config"]
+	path = medilabo-config
+	url = git@github.com:Sylakh/medilabo-config.git

@@ -15,7 +15,9 @@ public class SecurityConfig {
 
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		return http.authorizeHttpRequests(ar -> ar.anyRequest().authenticated())
+		return http
+				.authorizeHttpRequests(
+						ar -> ar.requestMatchers("/actuator/**").permitAll().anyRequest().authenticated())
 				// .csrf(AbstractHttpConfigurer::disable)
 				.oauth2ResourceServer(o2 -> o2.jwt(Customizer.withDefaults())).build();
 	}
