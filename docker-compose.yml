@@ -1,0 +1,129 @@
+version: '3.8'
+
+services:
+  eureka-server:
+    build: ./eureka-server
+    container_name: eureka-server
+    ports:
+      - '8761:8761'
+    networks:
+      - spring-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+
+  config-server:
+    build: ./config-server
+    container_name: config-server
+    ports:
+      - '9101:9101'
+    networks:
+      - spring-network
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    environment:
+      - EUREKA_SERVER_URL=http://eureka-server:8761/eureka
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9101/actuator/health"]
+      interval: 30s       # Intervalle entre les tests
+      timeout: 10s        # Temps maximum pour qu'une réponse soit reçue
+      retries: 3          # Nombre de tentatives avant de marquer le conteneur comme unhealthy
+      start_period: 40s   # Temps d'attente avant de commencer les tests de santé
+
+#  keycloak:
+#    image: quay.io/keycloak/keycloak:25.0.2
+#    container_name: keycloak
+#    environment:
+#      KC_HOSTNAME: localhost
+#      KC_HOSTNAME_PORT: 8080
+#      KC_HOSTNAME_STRICT_BACKCHANNEL: false
+#      KC_HTTP_ENABLED: true
+#      KC_HOSTNAME_STRICT_HTTPS: false
+#      KC_HEALTH_ENABLED: true
+#      KEYCLOAK_ADMIN: admin
+#      KEYCLOAK_ADMIN_PASSWORD: admin
+#      KC_DB: dev-mem
+#      KC_HTTP_PORT: 8080
+#      # Importer le fichier de configuration lors du démarrage de Keycloak
+#      KC_IMPORT: /opt/keycloak/data/import/realm-export.json -Dkeycloak.profile.feature.upload_scripts=enabled
+#    command: ["start-dev"]
+#    ports:
+#      - "8080:8080"
+#    restart: always
+#    volumes:
+#      - ./realm-export.json:/opt/keycloak/data/import/realm-export.json
+
+  gateway-server:
+    build: ./gateway-server
+    container_name: gateway-server
+    ports:
+      - '9102:9102'
+    networks:
+      - spring-network
+    depends_on:
+      config-server:
+        condition: service_healthy
+    environment:
+      - EUREKA_SERVER_URL=http://eureka-server:8761/eureka
+      - CONFIG_SERVER_URL=http://config-server:9101
+    
+  
+  
+  
+  medilabo-frontend:
+    build: ./medilabo-frontend
+    container_name: medilabo-frontend
+    ports:
+      - '9002:9002'
+    networks:
+      - spring-network
+
+  microback:
+    build: ./microback
+    container_name: microback
+    ports:
+      - '9001:9001'
+    networks:
+      - spring-network
+    depends_on:
+      config-server:
+        condition: service_healthy
+    environment:
+      - EUREKA_SERVER_URL=http://eureka-server:8761/eureka
+      - CONFIG_SERVER_URL=http://config-server:9101    
+
+  medilabo-note:
+    build: ./mmedilabo-note
+    container_name: medilabo-note
+    ports:
+      - '9003:9003'
+    networks:
+      - spring-network
+    depends_on:
+      config-server:
+        condition: service_healthy
+    environment:
+      - EUREKA_SERVER_URL=http://eureka-server:8761/eureka
+      - CONFIG_SERVER_URL=http://config-server:9101
+  
+  medilabo-report:
+    build: ./mmedilabo-report
+    container_name: medilabo-report
+    ports:
+      - '9004:9004'
+    networks:
+      - spring-network
+    depends_on:
+      config-server:
+        condition: service_healthy
+    environment:
+      - EUREKA_SERVER_URL=http://eureka-server:8761/eureka
+      - CONFIG_SERVER_URL=http://config-server:9101
+  
+
+networks:
+  spring-network:
+    driver: bridge
