@@ -3,6 +3,7 @@ package com.openclassrooms.medilabo_report.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +18,16 @@ public class MicrobackService {
 	@Autowired
 	private RestTemplate restTemplate;
 
+	@Value("${MICROBACK_URL}")
+	private String microback_URL;
+
 	public String helloFromMicroback() {
-		String url = "http://localhost:9001/hello";
+		String url = microback_URL + "/hello";
 		return restTemplate.getForObject(url, String.class);
 	}
 
 	public List<PatientBeans> getAllPatients() {
-		String url = "http://localhost:9001/patient";
+		String url = microback_URL + "/patient";
 
 		// Utilisation de ParameterizedTypeReference pour définir le type de retour
 		ResponseEntity<List<PatientBeans>> response = restTemplate.exchange(url, HttpMethod.GET, null,

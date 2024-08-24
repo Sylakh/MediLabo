@@ -1,5 +1,6 @@
 package com.openclassrooms.medilabo_report.configuration;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -13,6 +14,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+	@Value("${spring.security.oauth2.ressourceserver.jwt.jwk-set-uri}")
+	private String jwt;
+
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http
@@ -24,8 +28,7 @@ public class SecurityConfig {
 
 	@Bean
 	JwtDecoder jwtDecoder() {
-		return NimbusJwtDecoder.withJwkSetUri("http://localhost:8080/realms/medilabo/protocol/openid-connect/certs")
-				.build();
+		return NimbusJwtDecoder.withJwkSetUri(jwt).build();
 	}
 
 }

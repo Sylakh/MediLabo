@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import com.openclassrooms.medilabo_frontend.beans.ReportDataDTOBeans;
 
-@FeignClient(name = "medilabo-report", url = "localhost:9102/medilabo-report")
+@FeignClient(name = "medilabo-report", url = "${MEDILABO_REPORT_URL}")
 public interface MedilaboReportProxy {
 
 	@GetMapping("/report")

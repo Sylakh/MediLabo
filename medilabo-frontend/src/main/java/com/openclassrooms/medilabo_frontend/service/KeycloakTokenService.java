@@ -44,10 +44,10 @@ public class KeycloakTokenService {
 	@Value("${keycloak.token-revoke-uri}")
 	private String urlRevokeToken;
 
-	@Value("${spring.security.oauth2.client.registration.keycloack.client-id}")
+	@Value("${spring.security.oauth2.client.registration.keycloak.client-id}")
 	private String clientId;
 
-	@Value("${spring.security.oauth2.client.registration.keycloack.client-secret}")
+	@Value("${spring.security.oauth2.client.registration.keycloak.client-secret}")
 	private String clientSecret;
 
 	// Ajouter un attribut pour stocker l'heure d'expiration du token
@@ -68,7 +68,7 @@ public class KeycloakTokenService {
 			cachedToken = new CachedToken(newToken, expiryTime);
 			tokenCache.put("accessToken", cachedToken);
 		}
-
+		System.out.println("access token: " + cachedToken.getToken());
 		return cachedToken.getToken();
 	}
 

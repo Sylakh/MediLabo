@@ -1,0 +1,17 @@
+ config-server:
+    build: ./config-server
+    container_name: config-server
+    ports:
+      - '9101:9101'
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    environment:
+      - EUREKA_SERVER_URL=http://eureka-server:8761/eureka
+    healthcheck:
+      test: "curl --fail --silent  http://localhost:9101/actuator/health | grep 'UP' || exit 1"
+      interval: 30s      # Intervalle entre les vérifications
+      timeout: 10s       # Délai d'attente pour chaque vérification
+      retries: 5         # Nombre de tentatives avant de considérer le conteneur comme unhealthy
+      start_period: 15s  # Délai avant de commencer les vérifications
+    

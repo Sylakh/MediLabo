@@ -2,30 +2,30 @@ server:
   port: 9102
 
 spring:
-#  security:
-#    oauth2:
-#      resourceserver:
-#        jwt:
-#          issuer-uri: http://localhost:8080/realms/medilabo
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/medilabo
   cloud:
     gateway:
       routes:
         - id: microback
-          uri: ${MICROBACK_URI_YML:http://localhost:9001}  # L'URI de microback
+          uri: http://localhost:9001  # L'URI de microback
           predicates:
             - Path=/microback/**
           filters:
             - RemoveRequestHeader=Authorization
             - RelayTokenRequestFilter
         - id: medilabo-note
-          uri: ${NOTE_URI_YML:http://localhost:9003}  # L'URI de medilabo-note
+          uri: http://localhost:9003  # L'URI de medilabo-note
           predicates:
             - Path=/medilabo-note/**
           filters:
             - RemoveRequestHeader=Authorization
             - RelayTokenRequestFilter
         - id: medilabo-report
-          uri: ${REPORT_URI_YML:http://localhost:9004}  # L'URI de medilabo-report
+          uri: http://localhost:9004  # L'URI de medilabo-report
           predicates:
             - Path=/medilabo-report/**
           filters:

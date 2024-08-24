@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   eureka-server:
     build: ./eureka-server
@@ -31,30 +29,7 @@ services:
       interval: 30s       # Intervalle entre les tests
       timeout: 10s        # Temps maximum pour qu'une réponse soit reçue
       retries: 3          # Nombre de tentatives avant de marquer le conteneur comme unhealthy
-      start_period: 40s   # Temps d'attente avant de commencer les tests de santé
-
-#  keycloak:
-#    image: quay.io/keycloak/keycloak:25.0.2
-#    container_name: keycloak
-#    environment:
-#      KC_HOSTNAME: localhost
-#      KC_HOSTNAME_PORT: 8080
-#      KC_HOSTNAME_STRICT_BACKCHANNEL: false
-#      KC_HTTP_ENABLED: true
-#      KC_HOSTNAME_STRICT_HTTPS: false
-#      KC_HEALTH_ENABLED: true
-#      KEYCLOAK_ADMIN: admin
-#      KEYCLOAK_ADMIN_PASSWORD: admin
-#      KC_DB: dev-mem
-#      KC_HTTP_PORT: 8080
-#      # Importer le fichier de configuration lors du démarrage de Keycloak
-#      KC_IMPORT: /opt/keycloak/data/import/realm-export.json -Dkeycloak.profile.feature.upload_scripts=enabled
-#    command: ["start-dev"]
-#    ports:
-#      - "8080:8080"
-#    restart: always
-#    volumes:
-#      - ./realm-export.json:/opt/keycloak/data/import/realm-export.json
+      start_period: 30s   # Temps d'attente avant de commencer les tests de santé
 
   gateway-server:
     build: ./gateway-server
@@ -66,20 +41,25 @@ services:
     depends_on:
       config-server:
         condition: service_healthy
+      eureka-server:
+        condition: service_healthy
     environment:
       - EUREKA_SERVER_URL=http://eureka-server:8761/eureka
       - CONFIG_SERVER_URL=http://config-server:9101
-    
-  
-  
-  
-  medilabo-frontend:
-    build: ./medilabo-frontend
-    container_name: medilabo-frontend
-    ports:
-      - '9002:9002'
-    networks:
-      - spring-network
+      - KEYCLOAK_ISSUER_URI=http://192.168.231.73:8080/realms/medilabo
+      - KEYCLOAK_CERTS=http://192.168.231.73:8080/realms/medilabo/protocol/openid-connect/certs
+      - MICROBACK_URI_YML=http://microback:9001
+      - NOTE_URI_YML=http://medilabo-note:9003
+      - REPORT_URI_YML=http://medilabo-report:9004
+      - MICROBACK_URI=lb://microback:9001
+      - MEDILABO_NOTE_URI=lb://medilabo-note:9003
+      - MEDILABO_REPORT_URI=lb://medilabo-report:9004
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9102/actuator/health"]
+      interval: 30s       # Intervalle entre les tests
+      timeout: 10s        # Temps maximum pour qu'une réponse soit reçue
+      retries: 5          # Nombre de tentatives avant de marquer le conteneur comme unhealthy
+      start_period: 60s   # Temps d'attente avant de commencer les tests de santé
 
   microback:
     build: ./microback
@@ -91,12 +71,23 @@ services:
     depends_on:
       config-server:
         condition: service_healthy
+      eureka-server:
+        condition: service_healthy
     environment:
       - EUREKA_SERVER_URL=http://eureka-server:8761/eureka
-      - CONFIG_SERVER_URL=http://config-server:9101    
+      - CONFIG_SERVER_URL=http://config-server:9101
+      - MYSQL_HOST=host.docker.internal
+      - KEYCLOAK_ISSUER_URI=http://host.docker.internal:8080/realms/medilabo
+      - KEYCLOAK_CERTS=http://host.docker.internal:8080/realms/medilabo/protocol/openid-connect/certs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9001/actuator/health"]
+      interval: 30s       # Intervalle entre les tests
+      timeout: 10s        # Temps maximum pour qu'une réponse soit reçue
+      retries: 5          # Nombre de tentatives avant de marquer le conteneur comme unhealthy
+      start_period: 150s   # Temps d'attente avant de commencer les tests de santé
 
   medilabo-note:
-    build: ./mmedilabo-note
+    build: ./medilabo-note
     container_name: medilabo-note
     ports:
       - '9003:9003'
@@ -105,12 +96,24 @@ services:
     depends_on:
       config-server:
         condition: service_healthy
+      eureka-server:
+        condition: service_healthy
     environment:
       - EUREKA_SERVER_URL=http://eureka-server:8761/eureka
       - CONFIG_SERVER_URL=http://config-server:9101
+      - MONGO_BD=host.docker.internal
+      - SPRING_DATA_MONGODB_URI=mongodb://host.docker.internal:27017/patientnote
+      - KEYCLOAK_ISSUER_URI=http://host.docker.internal:8080/realms/medilabo
+      - KEYCLOAK_CERTS=http://host.docker.internal:8080/realms/medilabo/protocol/openid-connect/certs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9003/actuator/health"]
+      interval: 30s       # Intervalle entre les tests
+      timeout: 10s        # Temps maximum pour qu'une réponse soit reçue
+      retries: 3          # Nombre de tentatives avant de marquer le conteneur comme unhealthy
+      start_period: 150s   # Temps d'attente avant de commencer les tests de santé 
   
   medilabo-report:
-    build: ./mmedilabo-report
+    build: ./medilabo-report
     container_name: medilabo-report
     ports:
       - '9004:9004'
@@ -119,10 +122,48 @@ services:
     depends_on:
       config-server:
         condition: service_healthy
+      eureka-server:
+        condition: service_healthy
     environment:
       - EUREKA_SERVER_URL=http://eureka-server:8761/eureka
       - CONFIG_SERVER_URL=http://config-server:9101
+      - KEYCLOAK_ISSUER_URI=http://host.docker.internal:8080/realms/medilabo
+      - KEYCLOAK_CERTS=http://host.docker.internal:8080/realms/medilabo/protocol/openid-connect/certs
+      - MICROBACK=http://microback:9001
+      - NOTE_URL=http://medilabo-note:9003
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9004/actuator/health"]
+      interval: 30s       # Intervalle entre les tests
+      timeout: 10s        # Temps maximum pour qu'une réponse soit reçue
+      retries: 3          # Nombre de tentatives avant de marquer le conteneur comme unhealthy
+      start_period: 150s   # Temps d'attente avant de commencer les tests de santé
   
+  medilabo-frontend:
+    build: ./medilabo-frontend
+    container_name: medilabo-frontend
+    ports:
+      - '9002:9002'
+    networks:
+      - spring-network
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      gateway-server:
+        condition: service_healthy
+      microback:
+        condition: service_healthy
+      medilabo-note:
+        condition: service_healthy
+      medilabo-report:
+        condition: service_healthy
+    environment:
+      - MICROBACK_GATEWAY_URL=http://gateway-server:9102/microback
+      - NOTE_GATEWAY_URL=http://gateway-server:9102/medilabo-note
+      - REPORT_GATEWAY_URL=http://gateway-server:9102/medilabo-report
+      - KEYCLOAK_TOKEN_URI=http://192.168.231.73:8080/realms/medilabo/protocol/openid-connect/token
+      - KEYCLOAK_REVOKE_URI=http://192.168.231.73:8080/realms/medilabo/protocol/openid-connect/revoke
 
 networks:
   spring-network:
