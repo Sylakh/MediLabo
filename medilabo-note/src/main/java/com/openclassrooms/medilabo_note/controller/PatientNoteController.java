@@ -26,11 +26,6 @@ public class PatientNoteController {
 	@Autowired
 	private PatientNoteService patientNoteService;
 
-	@GetMapping("/hello")
-	public String hello() {
-		return "Hello from Medilabo-note!";
-	}
-
 	@GetMapping("/patientnote")
 	public List<PatientNote> getAllPatientNote() {
 		logger.info("Get all PatientNote");

@@ -69,7 +69,6 @@ public class LoginController {
 						new PatientDTO(patientBeans.getId(), patientBeans.getLastName(), patientBeans.getFirstName(),
 								patientBeans.getBirthday(), patientBeans.getGender(), patientBeans.getAddress(),
 								patientBeans.getPhone(), getResultById(reports, (long) patientBeans.getId())));
-				System.out.println(getResultById(reports, (long) patientBeans.getId()));
 			}
 			model.addAttribute("patients", patients);
 		} else {
@@ -95,6 +94,6 @@ public class LoginController {
 				return report.getResult();
 			}
 		}
-		return null; // ou gérer différemment si aucun élément correspondant n'est trouvé
+		return null;
 	}
 }

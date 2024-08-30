@@ -68,7 +68,7 @@ public class KeycloakTokenService {
 			cachedToken = new CachedToken(newToken, expiryTime);
 			tokenCache.put("accessToken", cachedToken);
 		}
-		System.out.println("access token: " + cachedToken.getToken());
+		logger.info("access token: got it!");
 		return cachedToken.getToken();
 	}
 
@@ -145,7 +145,7 @@ public class KeycloakTokenService {
 
 		// Vider le cache des tokens
 		tokenCache.clear();
-		System.out.println("All tokens have been cleared.");
+		logger.info("All tokens have been cleared.");
 
 		if (accessToken != null) {
 			revokeToken(accessToken);
@@ -168,13 +168,13 @@ public class KeycloakTokenService {
 			ResponseEntity<String> response = restTemplate.exchange(urlRevokeToken, HttpMethod.POST, requestEntity,
 					String.class);
 			if (response.getStatusCode().is2xxSuccessful()) {
-				System.out.println("Token has been successfully revoked.");
+				logger.info("Token has been successfully revoked.");
 			} else {
-				System.out.println("Failed to revoke token. Status code: " + response.getStatusCode());
+				logger.info("Failed to revoke token. Status code: " + response.getStatusCode());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("An error occurred while revoking the token.");
+			logger.info("An error occurred while revoking the token.");
 		} finally {
 
 		}

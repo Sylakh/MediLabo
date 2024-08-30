@@ -46,8 +46,8 @@ services:
     environment:
       - EUREKA_SERVER_URL=http://eureka-server:8761/eureka
       - CONFIG_SERVER_URL=http://config-server:9101
-      - KEYCLOAK_ISSUER_URI=http://192.168.231.73:8080/realms/medilabo
-      - KEYCLOAK_CERTS=http://192.168.231.73:8080/realms/medilabo/protocol/openid-connect/certs
+      - KEYCLOAK_ISSUER_URI=http://host.docker.internal:8080/realms/medilabo
+      - KEYCLOAK_CERTS=http://host.docker.internal:8080/realms/medilabo/protocol/openid-connect/certs
       - MICROBACK_URI_YML=http://microback:9001
       - NOTE_URI_YML=http://medilabo-note:9003
       - REPORT_URI_YML=http://medilabo-report:9004
@@ -162,8 +162,8 @@ services:
       - MICROBACK_GATEWAY_URL=http://gateway-server:9102/microback
       - NOTE_GATEWAY_URL=http://gateway-server:9102/medilabo-note
       - REPORT_GATEWAY_URL=http://gateway-server:9102/medilabo-report
-      - KEYCLOAK_TOKEN_URI=http://192.168.231.73:8080/realms/medilabo/protocol/openid-connect/token
-      - KEYCLOAK_REVOKE_URI=http://192.168.231.73:8080/realms/medilabo/protocol/openid-connect/revoke
+      - KEYCLOAK_TOKEN_URI=http://host.docker.internal:8080/realms/medilabo/protocol/openid-connect/token
+      - KEYCLOAK_REVOKE_URI=http://host.docker.internal:8080/realms/medilabo/protocol/openid-connect/revoke
 
 networks:
   spring-network:

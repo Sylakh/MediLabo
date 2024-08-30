@@ -3,6 +3,8 @@ package com.openclassrooms.medilabo_report.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +21,8 @@ import com.openclassrooms.medilabo_report.service.ReportDataService;
 @RestController
 public class ReportController {
 
+	private static final Logger logger = LogManager.getLogger("PatientReportController");
+
 	@Autowired
 	private MicrobackService microbackService;
 
@@ -28,13 +32,9 @@ public class ReportController {
 	@Autowired
 	private ReportDataService reportDataService;
 
-	@GetMapping("/hellox2")
-	public String hellox2() {
-		return microbackService.helloFromMicroback() + " " + noteService.helloFromNote();
-	}
-
 	@GetMapping("/report")
 	public List<ReportDataDTO> report() throws Exception {
+		logger.info("report process begins!");
 		List<PatientBeans> patients = new ArrayList<>();
 		List<PatientNoteBeans> notes = new ArrayList<>();
 		patients = microbackService.getAllPatients();
@@ -49,9 +49,8 @@ public class ReportController {
 		List<ReportDataDTO> listReportDTO = new ArrayList<>();
 		for (ReportData report : reports) {
 			listReportDTO.add(new ReportDataDTO(report.getId(), report.getResult()));
-			System.out.println(report.toString());
 		}
-
+		logger.info("report process done!");
 		return listReportDTO;
 	}
 

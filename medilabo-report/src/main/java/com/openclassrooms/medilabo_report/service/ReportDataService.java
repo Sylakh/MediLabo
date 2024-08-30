@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import com.openclassrooms.medilabo_report.model.PatientBeans;
@@ -17,12 +19,16 @@ import com.openclassrooms.medilabo_report.model.ReportData;
 @Service
 public class ReportDataService {
 
+	private static final Logger logger = LogManager.getLogger("ReportDataService");
+
 	public List<ReportData> generateReports(List<PatientBeans> patients, List<PatientNoteBeans> notes)
 			throws Exception {
 
+		logger.info("generate report process begins!");
+
 		// Convertir la liste des notes en une map pour un accès plus rapide
 
-		// Utiliser String comme type de clé si getPatientId() retourne un String
+		// Utiliser String comme type de clé car getPatientId() retourne un String
 		Map<String, List<PatientNoteBeans>> notesByPatientId = notes.stream()
 				.collect(Collectors.groupingBy(PatientNoteBeans::getPatientId));
 		// Construire la liste de ReportData
@@ -51,6 +57,7 @@ public class ReportDataService {
 			}
 
 		}
+		logger.info("generate report process done!");
 		return reports;
 	}
 
@@ -80,21 +87,6 @@ public class ReportDataService {
 			return null; // Retourne null si l'input est null pour gérer les valeurs nulles
 		}
 		return input.toString();
-	}
-
-	/**
-	 * Convertit une chaîne de caractères en un entier.
-	 * 
-	 * @param input La chaîne de caractères à convertir.
-	 * @return L'entier converti, ou null si la conversion échoue.
-	 */
-	public static Integer stringToInteger(String input) {
-		try {
-			return Integer.parseInt(input);
-		} catch (NumberFormatException e) {
-			System.err.println("Erreur: La chaîne de caractères n'est pas un entier valide - " + input);
-			return null;
-		}
 	}
 
 }

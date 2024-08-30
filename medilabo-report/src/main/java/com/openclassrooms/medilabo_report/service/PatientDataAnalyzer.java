@@ -6,20 +6,26 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.openclassrooms.medilabo_report.constant.RiskLevel;
 import com.openclassrooms.medilabo_report.constant.TriggerTerm;
 import com.openclassrooms.medilabo_report.model.ReportData;
 
 public class PatientDataAnalyzer {
 
+	private static final Logger logger = LogManager.getLogger("PatientDataAnalyzer");
+
 	private static final Set<String> triggers = Arrays.stream(TriggerTerm.values())
 			.map(term -> term.getDescription().toLowerCase()) // Convertir les descriptions en majuscules
 			.collect(Collectors.toSet());
 
 	public static void analyzePatientData(ReportData reportData) {
+		logger.info("Analyze Patient Data process begins!");
 		int triggerCount = countTriggers(reportData.getNotes());
 
-		System.out.println("trigger: " + triggerCount + " for patient: " + reportData.getId());
+		logger.debug("trigger: " + triggerCount + " for patient: " + reportData.getId());
 
 		if (triggerCount == 0) {
 			reportData.setResult(RiskLevel.NONE.name());
@@ -51,6 +57,7 @@ public class PatientDataAnalyzer {
 	 * @return Le nombre de déclencheurs uniques trouvés.
 	 */
 	private static int countTriggers(List<String> notes) {
+		logger.info("count triggers process begins!");
 		if (notes != null) {
 			Set<String> foundTriggers = new HashSet<>();
 			for (String note : notes) {
@@ -59,7 +66,7 @@ public class PatientDataAnalyzer {
 				for (String trigger : triggers) {
 					if (upperNote.contains(trigger) && !foundTriggers.contains(trigger)) {
 						foundTriggers.add(trigger);
-						System.out.println("trigger " + trigger + " found!");
+						logger.info("trigger " + trigger + " found!");
 					}
 				}
 			}

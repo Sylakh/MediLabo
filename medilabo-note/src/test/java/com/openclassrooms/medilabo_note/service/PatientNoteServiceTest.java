@@ -2,7 +2,6 @@ package com.openclassrooms.medilabo_note.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -44,7 +43,7 @@ public class PatientNoteServiceTest {
 		List<PatientNote> result = patientNoteService.findAll();
 
 		assertEquals(2, result.size());
-		verify(patientNoteRepository, times(1)).findAll();
+		verify(patientNoteRepository).findAll();
 	}
 
 	@Test
@@ -55,7 +54,7 @@ public class PatientNoteServiceTest {
 		PatientNote result = patientNoteService.findById("1");
 
 		assertEquals(note, result);
-		verify(patientNoteRepository, times(1)).findByPatientId("1");
+		verify(patientNoteRepository).findByPatientId("1");
 	}
 
 	@Test
@@ -77,7 +76,7 @@ public class PatientNoteServiceTest {
 		PatientNote created = patientNoteService.add(note);
 
 		assertEquals(note, created);
-		verify(patientNoteRepository, times(1)).save(note);
+		verify(patientNoteRepository).save(note);
 	}
 
 	@Test
@@ -87,8 +86,8 @@ public class PatientNoteServiceTest {
 
 		PatientNote updated = patientNoteService.addNote("New Note", "1");
 
-		verify(patientNoteRepository, times(1)).findById("1");
-		verify(patientNoteRepository, times(1)).save(note);
+		verify(patientNoteRepository).findById("1");
+		verify(patientNoteRepository).save(note);
 	}
 
 	@Test
